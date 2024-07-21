@@ -1,2 +1,2 @@
-# Meiosis-
+# Meiosis-算法废典
 啥也不会...
