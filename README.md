@@ -1,7 +1,5 @@
 # 算法&数据结构模板
 
-
-
 ## 算法
 
 ### 高精度
@@ -18,7 +16,7 @@ string Add(string num1,string num2){
     int len2=num2.length();
     int max;
     string num;
-	//补齐位数
+    //补齐位数
     if(len1>len2){
         for(int i=0;i<len1-len2;i++) num2="0"+num2;
         max=len1;
@@ -34,15 +32,12 @@ string Add(string num1,string num2){
         temp%=10;
         num=char(temp+'0')+num;
     }
-	//第一位进位
+    //第一位进位
     if(p>0){
         num=char(p+'0')+num;
     }
     return num;
-
 ```
-
-
 
 ##### 高精-高精
 
@@ -98,7 +93,6 @@ void print(string num){
         printf("%c",num[i]);
     }
 }
-
 ```
 
 ##### 高精*低精
@@ -122,10 +116,7 @@ string Mul(string num1,int num2){
     }
     return num;
 }
-
 ```
-
-
 
 ##### 高精/低精
 
@@ -146,10 +137,7 @@ string Div(string num1,long long num2){
     }
     return num;
 }
-
 ```
-
-
 
 ##### 高精*高精
 
@@ -187,10 +175,7 @@ void print(string num){
         printf("%c",num[i]);
     }
 }
-
 ```
-
-
 
 ##### 高精/高精
 
@@ -305,10 +290,7 @@ struct bign
         return *this;
     }
 };
-
 ```
-
-
 
 #### 压位数组
 
@@ -336,8 +318,6 @@ void Bubble_sort(int num[],int len){
 }
 ```
 
-
-
 #### 选择排序 O（ ）
 
 - 第一种：遍历一遍找到最小值然后交换
@@ -355,10 +335,7 @@ void Selection_sort1(vector<int> &num){
     }
     return;
 }
-
 ```
-
-
 
 - 第二种：遍历中发现较小值就交换
 
@@ -373,8 +350,6 @@ void Selection_sort2(vector<int> &num){
     return;
 }
 ```
-
-
 
 #### 插入排序 O（ ）
 
@@ -392,8 +367,6 @@ void Insertion_sort(vector<int>& num){
     return;
 }
 ```
-
-
 
 #### 快速排序 O（n ）
 
@@ -414,8 +387,6 @@ void Quick_sort(vector<int>& num,int l,int r){
     return;
 }
 ```
-
-
 
 #### 归并排序 O（n ）
 
@@ -458,10 +429,7 @@ void Merge_sort(vector<int>& num,int l,int r){
     if(num[mid]>num[mid+1]) Merge(num,l,mid,r); //如果无法自动合并成顺序，进行归并
     return;
 }
-
 ```
-
-
 
 ### 搜索
 
@@ -484,10 +452,7 @@ void dfs(int l,int r,long long sum,vector<long long>&now)
     dfs(l+1,r,sum+w[l],now); //选择买这场比赛的门票
     dfs(l+1,r,sum,now); //选择不买这场比赛的门票
 }
-
 ```
-
-
 
 ```cpp
 vector <long long>a,b;
@@ -499,7 +464,6 @@ int lenb=b.size();
 for(int i=0;i<lenb;i++) ans+=upper_bound(a.begin(),a.end(),m-b[i])-a.begin();
 //每次寻找花费比剩下的钱还要少的方案数，注意这里要使用upper_bound
 //若使用lower_bound，则出现等于的情况时，方案数会有错误
-
 ```
 
 #### DFS
@@ -539,7 +503,6 @@ for(int i=1;i<=n;i++){
     scanf("%d",&num[i]);
     num[i]=(num[i]+num[i-1])%mod;
 }
-
 ```
 
 ###### 二维前缀和
@@ -555,8 +518,6 @@ for (int i = 1; i <= n; i ++){
     for (int j = 1; j <= m; j ++) s[i][j] += s[i][j - 1];
 for (int i = 1; i <= m; i ++) s[i][j] += s[i - 1][j];
 }
-
-
 ```
 
 ##### 差分
@@ -591,7 +552,6 @@ for(int i = 1; i <= n; i++){
     b[i] += b[i-1];
     printf("%d ",b[i]);
 }
-
 ```
 
 ###### 二维差分：
@@ -620,8 +580,6 @@ for(int i = 1; i <= n; i++){
     }
     printf("\n");
 }
-
-
 ```
 
 #### 背包dp
@@ -666,7 +624,6 @@ for(int i=1;i<=n;i++){
 }
 for(int j=n-k;j<=n;j++) Min=min(Min,dp[j]);
 printf("%lld",sum-Min);
-
 ```
 
 ### 字符串
@@ -677,9 +634,11 @@ printf("%lld",sum-Min);
 
 对已给参考字符串进行预处理，求出next数组即如果在对比时下一位对不上号返回的字符串下标，在比对时直接将字符串指针移至参考字符串j位置。
 
-Next数组：1.根据定义，不断延参考字符串向后遍历已有next数组，如果指向字符与该字符不相同，则继续沿着指向字符的next继续判断，直至指针指向字符与该字符相同（最大公共前后缀）或者指向0（无法匹配），将next下一位赋上指针的下一位（j+1）或者0（从哪一位继续判断）
+Next数组：
 
-             2.本质上，next[i]为参考字符串前i位字符子串的最大公共前后缀的长度
+1. 根据定义，不断延参考字符串向后遍历已有next数组，如果指向字符与该字符不相同，则继续沿着指向字符的next继续判断，直至指针指向字符与该字符相同（最大公共前后缀）或者指向0（无法匹配），将next下一位赋上指针的下一位（j+1）或者0（从哪一位继续判断）
+
+2. 本质上，next[i]为参考字符串前i位字符子串的最大公共前后缀的长度
 
 ```cpp
 void getFail(char* p,int plen){ //plen为字符串p的长度
@@ -692,7 +651,6 @@ void getFail(char* p,int plen){ //plen为字符串p的长度
     }
     return;
 }
-
 ```
 
 kmp实现：i不断往下遍历字符串（不回头），j指向已给参考字符串，将i与j对比，如果字符相同同时向后一位继续对比，如果不同j指向next[j]继续对比直至i遍历完
@@ -715,14 +673,17 @@ void kmp(char *s,char *p){
     }
     return;
 }
-
 ```
 
 ##### 前缀函数s[i]
 
 定义：S的子串S’（0，i）在有一对相等的前缀和后缀，是s[i]为其长度 eg：”abaabca”子串”abbab”有相等前缀后缀“ab“长度为2，s[5]=2
 
-计算：1. 相邻的前缀函数值至多增加1
+计算：
+
+1. 相邻的前缀函数值至多增加1
+
+2. 
 
 ```cpp
 char s1[MAX]={0};
@@ -760,7 +721,6 @@ void kmp(char *s,char *p){
     }
     return;
 }
-
 ```
 
 #### Trie树
@@ -777,7 +737,7 @@ void kmp(char *s,char *p){
 
 <mark>把无限空间中有限的个体映射到有限的空间中去，以此提高算法的时空效率</mark>
 
-1.      **原来相等的值离散化后仍然相等**。那么在对原序列进行**排序**后，进行**去重操作**即可
+1. **原来相等的值离散化后仍然相等**。那么在对原序列进行**排序**后，进行**去重操作**即可
 
 ```cpp
 int n;  //原序列长度
@@ -796,10 +756,9 @@ for(int i=0;i<n;i++) f[i]=a[i];
 sort(f,f+n);
 len=unique(f,f+n)-f;
 for(int i=0;i<n;i++) a[i]=upper_bound(f,f+len,a[i])-f; //离散化
-
 ```
 
-2.      **原来相等的值，离散化后不相等。**那不进行去重操作就好了，但是要新增一个id属性
+2. **原来相等的值，离散化后不相等。那不进行去重操作就好了，但是要新增一个id属性**
 
 ```cpp
 struct node
@@ -821,7 +780,6 @@ for(int i=0;i<n;i++){
 }
 sort(a,a+n);
 for(int i=0;i<n;i++) f[a[i].id]=i+1;
-
 ```
 
 ### 数学
@@ -840,7 +798,6 @@ long long mod(long long a,long long b,long long p){
     if(b%2==0)  return temp*temp%p;
     else return temp*temp%p*a%p;
 }
-
 ```
 
 #### 素数
@@ -853,19 +810,15 @@ bool isPrime(int n){
     }
     return true;
 }
-
 ```
 
 #### 最大公约数（GCD）
-
-
 
 ```cpp
 int gcd(int a, int b) {
     if (b == 0)  return a;
     return gcd(b, a % b);
 }
-
 ```
 
 #### 费马小定理：
@@ -902,9 +855,9 @@ int gcd(int a, int b) {
 
 预处理：将并查集初始化
 
-<mark>1.     对边值从小到大排序 sort()</mark>
+<mark>1. 对边值从小到大排序 sort()</mark>
 
-<mark>2.     将边的始终点放入并查集(重复的即x==y说明如果加上该边形成了一个环，放弃该边)，遍历所有边直至结束</mark>
+<mark>2. 将边的始终点放入并查集(重复的即x==y说明如果加上该边形成了一个环，放弃该边)，遍历所有边直至结束</mark>
 
 ```cpp
 void kruskal(){
@@ -919,7 +872,6 @@ void kruskal(){
     }
     return;
 }
-
 ```
 
 #### 链式前向星(如果不是树感觉不如开vector数组)
@@ -934,11 +886,11 @@ to[cnt]：表示编号为cnt的边的终点。
 
 当加入一条新的边e(u,v)时：
 
-①    cnt++，表示这条边的编号。
+- cnt++，表示这条边的编号。
 
-②     next[cnt]=head[u]：将原来以u作为起点的第一条边，作为该边的后续边。
+- next[cnt]=head[u]：将原来以u作为起点的第一条边，作为该边的后续边。
 
-③     to[cnt]=v：当前边的终点设置。
+- to[cnt]=v：当前边的终点设置。
 
 ```cpp
 void add(int u,int v)
@@ -947,7 +899,6 @@ void add(int u,int v)
     head[u]=cnt;
     to[cnt]=v;
 }
-
 ```
 
 带权图
@@ -960,7 +911,6 @@ void add(int u,int v,int w)
     to[cnt]=v;
     val[cnt]=w;
 }
-
 ```
 
 #### 最短路问题
@@ -973,9 +923,9 @@ void add(int u,int v,int w)
 
 判断负环：
 
-1. 开始算法前，调用拓扑排序进行判断（一般不采用，浪费时间）
+1.开始算法前，调用拓扑排序进行判断（一般不采用，浪费时间）
 
-<mark>2.如果某个点进入队列的次数超过N次则存在负环（N为图的顶点数）</mark>
+<mark>2. 如果某个点进入队列的次数超过N次则存在负环（N为图的顶点数）</mark>
 
 选择源点后将源点序号推入队列，不断将队首元素弹出然后遍历其对应节点连结的边的权值，判断其是否小于已有dis数组中的值，如果是且该节点序号未进入队列，将其推入队列并修改dis数组，不断循环至队列为空。
 
@@ -995,8 +945,8 @@ bool SPFA(int s,int n){ //源点为s，顶点数为n
         for(int i=head[p];i!=0;i=Next[i]){
             int t=to[i];
             if(val[i]+dis[p]<dis[t])
-		//if(val[i]+dis[p]>dis[t])
-		{
+        //if(val[i]+dis[p]>dis[t])
+        {
                 dis[t]=val[i]+dis[p];
                 if(!inqueue[t]){ //如果指向元素未在队列中则添加
                     q.push(t);
@@ -1008,12 +958,11 @@ bool SPFA(int s,int n){ //源点为s，顶点数为n
     }
     return true;
 }
-
 ```
 
 #### 最近公共祖先（LCA）
 
-1.    <mark> 预处理：计算log2[MAX]用于倍增</mark>
+1.<mark> 预处理：计算log2[MAX]用于倍增</mark>
 
 ```cpp
 for(int k=2;k<=n;k++) log2[k]=log2[k/2]+1;
@@ -1024,10 +973,9 @@ for(int k=2;k<=n;k++) log2[k]=log2[k/2]+1;
 <mark>注：无向图链式前向星要存两遍，内存也要开两倍</mark>
 
 ```cpp
-	//无向图要存两次
+//无向图要存两次
 add(x,y);
 add(y,x);
-
 ```
 
 <mark>2.首先用dfs遍历一遍树（可用链式前向星存储），获取其深度，用倍增算法（dp）记录每个节点2^k次方祖先</mark>
@@ -1043,7 +991,6 @@ void dfs(int cur,int fa){
     for(int j=head[cur];j!=0;j=nexts[j]) if(to[j]!=fa) dfs(to[j],cur); //遍历所有连结的边
     return;
 }
-
 ```
 
 <mark>3.LCA主体：先使a，b位于同一深度，不断从头往回倍增跳找到最远的不是公共祖先的点，其父节点就是最近公共祖先</mark>
@@ -1063,7 +1010,6 @@ int lca(int a,int b){
     //返回该节点父节点
     return f[a][0];
 }
-
 ```
 
 #### 树上启发式合并
@@ -1088,7 +1034,6 @@ if(SPFA(0,n)){ //如果存在负环说明无解
     for(int i=1;i<=n;i++) printf("%d ",dis[i]); …//根据题意
 }
 else printf("NO"); …//根据题意
-
 ```
 
 #### 二分图
@@ -1131,7 +1076,6 @@ void del(int a){
     if(cnt[num[a]]==0) cur--;
     return;
 }
-
 ```
 
 ##### 树上莫队
@@ -1144,8 +1088,7 @@ void del(int a){
 
 一、vector 的初始化：
 
-    (1)
-vector<int> a(10); //定义了10个整型元素的向量（尖括号中为元素类型名，它可以是任何合法的数据类型），但没有给出初值，其值是不确定的。
+    (1)vector<int> a(10); //定义了10个整型元素的向量（尖括号中为元素类型名，它可以是任何合法的数据类型），但没有给出初值，其值是不确定的。
 
    （2）vector<int> a(10,1); //定义了10个整型元素的向量,且给出每个元素的初值为1
 
@@ -1208,8 +1151,7 @@ vector<int> a(10); //定义了10个整型元素的向量（尖括号中为元素
 
 （2）<mark>reverse(a.begin( ),a.end( ));</mark> //对a中的从a.begin()（包括它）到a.end()（不包括它）的元素倒置，但不排列
 
-（3）copy(a.begin( ),a.end(
-),b.begin( )+1); //把a中的从a.begin()（包括它）到a.end()（不包括它）的元素复制到b中，从b.begin()+1的位置（包括它）开始复制，覆盖掉原有元素
+（3）copy(a.begin( ),a.end(),b.begin( )+1); //把a中的从a.begin()（包括它）到a.end()（不包括它）的元素复制到b中，从b.begin()+1的位置（包括它）开始复制，覆盖掉原有元素
 
 （4）<mark>find(a.begin( ),a.end( ),10);</mark> //在a中的从a.begin()（包括它）到a.end()（不包括它）的元素中查找10，若存在返回其在向量中的位置
 
@@ -1322,7 +1264,6 @@ for(int i=1;i<=n;i++) {
     while (!s.empty() && num[s.top()] < num[i]) s.pop();
     s.push(i); //一般存元素的下标
 }
-
 ```
 
 ### 队列——先进先出(FIFO)
@@ -1374,12 +1315,11 @@ deque<int> Q; // 存储的是编号!!!
 for (int i = 0; i < n; ++i){
     if (!Q.empty() && i - Q.front() >= m) // 队首元素已移出框外
     Q.pop_front();
-	//形成单调队列，只要比将放入元素大/小的元素就移出队列
+    //形成单调队列，只要比将放入元素大/小的元素就移出队列
     while (!Q.empty() && num[Q.back()] < num[i]) Q.pop_back();
     Q.push_back(i); // 新元素入队
     if (i >= m - 1) printf("%d",num[Q.front()]);
 }
-
 ```
 
 ##### 二维（用单调队列先后处理行和列）
@@ -1415,7 +1355,6 @@ for(int i=1;i<=b-n+1;i++){
         if(j>=n) smax[j-n+1][i]=fmax[d.front()][i];
     }
 }
-
 ```
 
 #### 循环队列（暂时不知道能干啥，没学）
@@ -1434,7 +1373,6 @@ struct Queue
     int       front; //头指针
     int       rear; //尾指针
 }Queue;
-
 ```
 
 2.     初始化
@@ -1449,7 +1387,6 @@ void InitQueue(Queue *Q)
     //初始时队列为空，头指针和尾指针都指向0位置
     Q->front = Q->rear = 0;
 }
-
 ```
 
 3.     入队
@@ -1466,7 +1403,6 @@ void EnQueue(Queue *Q, int x)
     //更改尾指针的指向
     Q->rear = (Q->rear+1)%MAXSIZE;
 }
-
 ```
 
 4.     出队
@@ -1481,7 +1417,6 @@ void DeQueue(Queue *Q)
     //如果非空，实现可循环出队
     Q->front = (Q->front+1)%MAXSIZE;
 }
-
 ```
 
 5.     打印队列
@@ -1499,7 +1434,6 @@ void ShowQueue(Queue *Q)
     }
     printf("\n");
 }
-
 ```
 
 6.     获取队首元素
@@ -1514,7 +1448,6 @@ void GetHdad(Queue *Q, int *v)
     //如果队列不为空，获取队头元素
     *v = Q->base[Q->front];
 }
-
 ```
 
 7.     队列长度
@@ -1529,7 +1462,6 @@ int Length(Queue *Q)
     len = (len>0) ? len : MAXSIZE+len;
     return len;
 }
-
 ```
 
 8.     清空队列
@@ -1541,36 +1473,31 @@ void ClearQueue(Queue *Q)
     //将队头指针和队尾指针都置为0
     Q->front = Q->rear = 0;
 }
-
 ```
 
 #### 优先队列（我的评价是不如sort）
 
 **优先队列自动按从大到小排序（结构体队列需重构‘<‘）**
 
-**priority_queue<****结构类型****>** **队列名****;**
+priority_queue<****结构类型****> **队列名;**
 
-**q.size( ); //****返回q里元素个数**
+q.size( ); //**返回q里元素个数**
 
-**q.empty( ); //****返回q是否为空，空则返回1，否则返回0**
+q.empty( ); //**返回q是否为空，空则返回1，否则返回0**
 
-**q.push(k) ;//****在q的末尾插入k**
+q.push(k) ;//**在q的末尾插入k**
 
-**q.pop( ); //****删掉q的第一个元素**
+q.pop( ); //**删掉q的第一个元素**
 
-**q.top( ); //****返回q的第一个元素**
+q.top( ); //**返回q的第一个元素**
 
 ##### less和greater优先队列
 
-**priority_queue <int,vector<int>,less<int>
+**priority_queue <int,vector<int>,less<int>p;**
 
-> p;**
+**priority_queue <int,vector<int>,greater<int>q;**
 
-**priority_queue <int,vector<int>,greater<int>
-
-> q;**
-
-**less****是从大到小，****greater****是从小到大**
+**less是从大到小，greater是从小到大**
 
 ### 并查集
 
@@ -1580,7 +1507,6 @@ void ClearQueue(Queue *Q)
 int f[MAXN];
 int n;
 for (int i = 1; i <= n; ++i) f[i] = i;
-
 ```
 
 2.     查找
@@ -1593,7 +1519,6 @@ int find(int x)
     else
         return find(f[x]);
 }
-
 ```
 
 3.     合并
@@ -1603,7 +1528,6 @@ void merge(int i, int j)
 {
     f[find(i)] = find(j);
 }
-
 ```
 
 4.     路径压缩
@@ -1626,12 +1550,11 @@ int find(int x)
 {
     return x == f[x] ? x : (f[x] = find(f[x]));
 }
-
 ```
 
 #### 按秩合并
 
-1.初始化
+1. 初始化
 
 ```cpp
 for (int i = 1; i <= n; ++i)
@@ -1639,10 +1562,9 @@ for (int i = 1; i <= n; ++i)
     f[i] = i;
     rank[i] = 1;
 }
-
 ```
 
-2.合并
+2. 合并
 
 ```cpp
 void merge(int i, int j)
@@ -1655,10 +1577,23 @@ void merge(int i, int j)
     if (rank[x] == rank[y] && x != y)
         rank[y]++;                   //如果深度相同且根节点不同，则新的根节点的深度+1
 }
-
 ```
 
 #### 带权并查集
+
+先向上进行查找，待查找遍历完成后计算价值，最后将指向节点赋值
+
+```cpp
+int find(int a){
+    if(f[a]==a) return a;
+    else{
+        int temp=find(f[a]);
+        val[a]+=val[f[a]]; //根据题意进行计算
+        f[a]=temp;
+        return f[a];
+    }
+}
+```
 
 #### 种类并查集（难点）
 
@@ -1675,7 +1610,6 @@ if(x==y){
 }
 hail[y]=find(p[j].p1+n);
 hail[x]=find(p[j].p2+n);
-
 ```
 
 ### 树
@@ -1697,7 +1631,6 @@ struct node{
         r= nullptr;
     }
 };
-
 ```
 
 先序遍历（父右左）：
@@ -1709,7 +1642,6 @@ void pre(node *head){
     if(head->r) pre(head->r);
     return;
 }
-
 ```
 
 中序遍历（右父左）：
@@ -1721,7 +1653,6 @@ void in(node *head){
     if(head->r) in(head->r);
     return;
 }
-
 ```
 
 后续遍历（右左父）：
@@ -1733,7 +1664,6 @@ void post(node *head){
     printf("%c",head->val);
     return;
 }
-
 ```
 
 查找：
@@ -1746,7 +1676,6 @@ node *find(char root,node *head){
     if(head->r && temp== nullptr) temp=find(root,head->r);
     return temp;
 }
-
 ```
 
 ##### 二叉搜索树
@@ -1769,7 +1698,6 @@ node *find(char val,node *head){
     if(head->val<val && head->r) temp=find(val,head->r);
     return temp;
 }
-
 ```
 
 - 迭代版：
@@ -1783,7 +1711,6 @@ node *find(char val,node *head){
     }
     return NULL; /*查找失败*/
 }
-
 ```
 
 ##### Set（STL）
@@ -1902,7 +1829,6 @@ void update(long long ad,int l,int r,int a=1,int b=n,int u=1){ //a,b为当前节
     t[u]=t[u<<1]+t[(u<<1)+1];
     return;
 }
-
 ```
 
 带有加法和乘法的区间修改
@@ -1925,7 +1851,6 @@ void push_down(int u,int len){ //更新u的子节点
     }
     return;
 }
-
 ```
 
 乘法修改：
@@ -1948,7 +1873,6 @@ void updatemul(long long mu,int l,int r,int a=1,int b=n,int u=1){ //a,b为当前
     t[u]=(t[u<<1]+t[(u<<1)+1])%M;
     return;
 }
-
 ```
 
 ###### 红黑树
@@ -1959,7 +1883,7 @@ void updatemul(long long mu,int l,int r,int a=1,int b=n,int u=1){ //a,b为当前
 
 根据优先级进行建树（根节点优先级最大），在新节点插入后根据优先级进行旋转，插入节点优先度随机使二叉树节点分布更加均匀，防止退化成链表
 
-更新节点：
+- 更新节点：
 
 ```cpp
 //更新以root为根的子树的大小
@@ -1969,12 +1893,11 @@ void update(node *&root){
     if(root->son[1]!=NULL) root->size+=root->son[1]->size;
     return;
 }
-
 ```
 
-旋转：
-
-根据优先度等级进行旋转调整，将后插入或删除完节点后的子节点旋转到符合有限度排序的地方
+- 旋转：
+  
+  根据优先度等级进行旋转调整，将后插入或删除完节点后的子节点旋转到符合有限度排序的地方
 
 ```cpp
 //旋转（中序遍历顺序不变） op=0为左，op=1为右
@@ -1987,10 +1910,9 @@ void rotate(node *&root,int op){
     root=temp;
     return;
 }
-
 ```
 
-插入（建树）：
+- 插入（建树）：
 
 ```cpp
 void insert(node *&root,int x){
@@ -2016,10 +1938,117 @@ void insert(node *&root,int x){
     update(root); //每次更新节点
     return;
 }
-
 ```
 
-###### AVL树
+- 删除节点：
+  
+  找到目标节点后根据左右子节点优先度进行旋转（如果有的话），直到<mark>目标节点旋转到叶节点</mark>然后将其删除
+
+```cpp
+//删除x
+void del(node* &root,int x){
+    if(root==NULL) return;
+    if(root->val==x){
+        //如果该节点数有多个减去一个
+         if(root->num>1){
+             root->num--;
+             root->size--;
+         }
+         else{
+             if(root->son[0]==NULL && root->son[1]==NULL ) root=NULL; //目标节点为叶节点直接删除
+             else if(root->son[0]==NULL) root=root->son[1]; //仅有左/右子节点，将其直接连结
+             else if(root->son[1]==NULL) root=root->son[0];
+             else{
+                 //左节点大向右旋递归删右节点，右节点大与之相反
+                 if(root->son[0]->rank>root->son[1]->rank){
+                     rotate(root,1);
+                     del(root->son[1], x);
+                 }
+                 else{
+                     rotate(root,0);
+                     del(root->son[0], x);
+                 }
+             }
+         }
+    }
+    //根据BST规则查找目标节点
+    else if(root->val<x) del(root->son[1],x);
+    else del(root->son[0],x);
+    if (root) update(root); //更新遍历过的节点
+    return;
+}
+```
+
+- 求前驱（小于 x，且最大的数）/后继（大于 x，且最小的数）：
+  
+  找到x，前驱即遍历过程中最后的右子节点值（root < x），后继即遍历过程中最后的左子节点值（root > x）
+
+```cpp
+//前驱
+int pre(node *&root,int x,int val=-INF){
+    if(root==NULL) return val;
+    if (root->val >= x) return pre(root->son[0], x, val);
+    else return pre(root->son[1], x, root->val);
+}
+
+//后继
+int post(node *&root,int x,int val=INF){
+    if(root==NULL) return val;
+    if (root->val <= x) return post(root->son[1], x, val);
+    else return post(root->son[0], x, root->val);
+}
+```
+
+- 查询排名：
+  
+  x排名即为遍历过所有小于等于x的节点（包括x自身）的左子树之和+1
+  
+  ```cpp
+  int findrank(node *&root,int x,int val=0){
+      if(root==NULL) return val+1;
+      int rank = (root->son[0] == NULL) ? 0 : root->son[0]->size; //防止左子树为空出现RE报错
+      if(root->val==x) return val+rank+1;
+      else if(root->val<x) return findrank(root->son[1],x,val+root->num+rank);
+      else return findrank(root->son[0],x,val);
+  }
+  ```
+
+- 根据排名找节点：
+  
+  同查询排名理，只需考虑x节点自身数量导致的排名范围即可，根据小于当前节点的数（当前节点排名）比目标排名关系找到目标节点
+  
+  ```cpp
+  int rankfind(node *&root,int x,int val=0){
+      int rank = (root->son[0] == NULL) ? 0 : root->son[0]->size;
+      if(rank+val+1<=x && rank+val+root->num>=x) return root->val;
+      else if(rank+val+root->num<x) return rankfind(root->son[1],x,val+root->num+rank);
+      else return rankfind(root->son[0],x,val);
+  }
+  ```
+
+###### Splay树
+
+**<mark>适用于经常查询和使用一个数，以及合并/分裂树,可以把某一结点向上旋转到指定位置</mark>**
+
+每次查找都会将节点旋转到根节点，而且每次操作都会在根节点上操作，故而每次操作前都需要查找
+
+- 旋转：
+  
+  与Treap树旋转原理相同（所有平衡树都是这个旋转），但是Splay树旋转实现给子节点旋转，Treap树旋转实现给爷爷节点旋转，代码实现不太相同，所以Splay树还需要存储每个节点的父节点，用数组建树比较好完成。
+  
+  ```cpp
+  
+  ```
+
+- Splay（伸展）：
+  
+  将目标节点向上旋转到根节点，根据父节点及其爷爷节点（如果有的话）关系进行旋转
+  
+  ```cpp
+  
+  ```
+
+
 
 ##### 霍夫曼树
 
@@ -2036,5 +2065,3 @@ void insert(node *&root,int x){
 ### ST表
 
 ### 哈希表
-
-
