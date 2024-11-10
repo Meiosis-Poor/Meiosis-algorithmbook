@@ -433,7 +433,22 @@ void Merge_sort(vector<int>& num,int l,int r){
 
 ## 搜索
 
-### 二分查找
+### 二分查找（有序！！！！）
+
+<mark>用这两个函数之前必须是在**有序的数组**中！！！！</mark>
+
+**lower_bound** 返回第一个值不小于 val 的位置,**也就是返回第一个大于等于val值的位置**
+
+```cpp
+bool cmp(const int& e, const int& val)
+{
+    return e >= val; //根据需求写，默认是返回大于等于val
+}
+
+lower_bound( begin , end , val , cmp )
+```
+
+**upper_bound** 返回第一个值大于 val 的位置，**也就是返回第一个大于val值的位置**
 
 ### 折半搜索
 
@@ -594,6 +609,23 @@ for(int i = 1; i <= n; i++){
 
 将多维问题转化为二进制解决，极大节省空间和时间，将多维之间的关系用位运算表达判断，进而得出dp方程，因为转化为二进制，**只适用于维度适中且关系单一的数据量**（二进制能存两种关系，三进制更多但没学会……）
 
+记录状态轮数如果较多且仅比较最近几个状态可以采用滚动数组降低空间复杂度
+
+dp数组一般标号为存储的状态，变化多端需要仔细分析
+
+补充一个二进制判断1的个数的函数方法
+
+```cpp
+int number(long long m) {
+    int count = 0;
+    while (m) {
+        m = m & (m - 1);
+        count++;
+    }
+    return count;
+}
+```
+
 ### 数位dp（处理数字位数或者个别数字出现）
 
 构建dp[i][j]，i表示当前位数，j表示当前首位数字，根据题意构建dp[i][j]与dp[i-1][k]的关系（0<k<10）
@@ -633,6 +665,20 @@ printf("%lld",sum-Min);
 ## 字符串
 
 ### 哈希
+
+将大规模字符串快速匹配，将每个字符串/子串映射到某个特定的值上
+
+**eg:BKDRHash**
+
+<mark>注：取余可能会产生冲突问题，根据题目再取余</mark>
+
+```cpp
+int Hash(char *str){
+    int seed=31,key=0;
+    while(*str) key=key*seed+(*str++);
+    return (key&0x7fffffff)%mod;
+}
+```
 
 ### KMP（高效寻找已给出的重复子串）
 
@@ -681,7 +727,7 @@ void kmp(char *s,char *p){
 
 #### 前缀函数s[i]
 
-定义：S的子串S’（0，i）在有一对相等的前缀和后缀，是s[i]为其长度 eg：”abaabca”子串”abbab”有相等前缀后缀“ab“长度为2，s[5]=2
+定义：S的子串S’（0，i）在有一对相等的前缀和后缀，是s[i]为其长度 eg：”abaabca”子串”abaab”有相等前缀后缀“ab“长度为2，s[5]=2
 
 计算：
 
@@ -727,9 +773,115 @@ void kmp(char *s,char *p){
 }
 ```
 
-### Trie树
+### Trie树（字典树）
+
+从根节点出发（不算根节点）每一层节点存储第n个字母（也有用边存储字母的），能够快速匹配字符串/前缀，输入法匹配要输入的字即是这种思路
+
+注：如果建结构体实现可能会MLE，建议使用数组建树；**每次重新建树记得初始化数组和pos！！memset大概率TLE**
+
+* 数值映射
+  
+  将字符转化为对应的数，可以直接将字符减去’0‘/’a'
+  
+  ```cpp
+  int getnum(char x){
+      if(x>='A'&&x<='Z') return x-'A';
+      else if(x>='a'&&x<='z') return x-'a'+26;
+      else return x-'0'+52;
+  }
+  ```
+
+* 插入
+  
+  将已知字符串每个字符从根节点出发依此插入，向下遍历，如果没有该节点新建节点并向下延伸，更新子树字符串结尾数和
+  
+  <mark>注：根节点不存值故pos=1</mark>
+  
+  ```cpp
+  void Insert(string s){
+      int len=s.length();
+      int p=0;
+      for(int i=0;i<len;i++){
+          int temp=getnum(s[i]);
+          if(trie[p][temp]==0) trie[p][temp]=pos++;
+          p=trie[p][temp];
+          cnt[p]++;
+      }
+      return;
+  }
+  ```
+
+* 检索字符串
+  
+  将要搜索的字符串每个字符依此在trie上查找，如果完全查完该结尾节点的cnt即为以其为前缀的已知字符串数量，如果有节点为空即没有该前缀的字符串，其他形式可由题意改得
+  
+  ```cpp
+  int Find(string s){
+      int len=s.length();
+      int p=0;
+      for(int i=0;i<len;i++){
+          int temp=getnum(s[i]);
+          if(trie[p][temp]==0) return 0;
+          p=trie[p][temp];
+      }
+      return cnt[p];
+  }
+  ```
 
 ### AC自动机
+
+AC 自动机是 **以 Trie 的结构为基础**，结合 **KMP 的思想** 建立的自动机，用于解决多模式匹配等任务。
+
+首先建立一个trie树，建立fail失配指针，BFS遍历一遍字典树构建每个节点的失配指针，在查找的时候如果下一位不匹配则指向失配指针指向的节点位置
+
+* 构建失配指针
+  
+  先将第一层预处理，使其指向源点，将第一层所有节点放入队列中，依此遍历队列中所有节点的子节点（a-z）,如果节点存在,将该节点的失配指针指向其父节点所指向的指针的下一个与其存储字符相同的子节点，并将该节点放入队列；如果该子节点不存在，向上连结对应字符的节点
+  
+  ```cpp
+  void getFail(){
+      queue<int>q;
+      for(int i=0;i<26;i++){
+          if(trie[0][i]){
+              f[trie[0][i]]=0;
+              q.push(trie[0][i]);
+          }
+      }
+      while(!q.empty()){
+          int now=q.front();
+          q.pop();
+          for(int i=0;i<26;i++){
+              if(trie[now][i]){
+                  f[trie[now][i]]=trie[f[now]][i];
+                  q.push(trie[now][i]);
+              }
+              else trie[now][i]=trie[f[now]][i];
+          }
+      }
+      return;
+  }
+  ```
+
+* 查找
+  
+  遍历字符串，从字典树根节点出发，如果遇到不匹配的字符，将指针移至该节点失配指针指向的节点，如果遍历到的节点为完整字符串的结尾，则包含该完整字符串
+  
+  注：根据题意进行ans计算和cnt的标记
+  
+  ```cpp
+  int query(string s){
+      int now = 0,ans = 0;
+      for(int i=0;i<s.size();i++){    //遍历文本串
+          now = trie[now][s[i]-'a'];  //从s[i]点开始寻找
+          for(int j=now;j && cnt[j]!=-1;j=f[j]){
+              //一直向下寻找,直到匹配失败(失败指针指向根或者当前节点已找过).
+              ans += cnt[j];
+              cnt[j] = -1;    //将遍历过后的节点标记,防止重复计算
+          }
+      }
+      return ans;
+  }
+  ```
 
 ### 回文自动机（Manacher算法）
 
@@ -862,6 +1014,8 @@ bool isPrime(int n){
 
 ### 最大公约数（GCD）
 
+小技巧：对于任意a、b,总存在$ax+by=gcd(a,b)$！！
+
 ```cpp
 int gcd(int a, int b) {
     if (b == 0)  return a;
@@ -882,7 +1036,7 @@ int gcd(int a, int b) {
 ```cpp
 for(int i=1;i<=2e5;i++) fact[i] = (fact[i - 1] * i) % mod;
 
-long long modExp(long long base, long long exp) { //循环板快速幂
+long long modExp(long long base, long long exp) { //循环版快速幂
     long long result = 1;
     while (exp > 0) {
         if (exp % 2 == 1)
@@ -929,8 +1083,44 @@ long long nCr(long long n, long long r) {
 ### 最小生成树
 
 * Prim算法（对点贪心，适用于稠密图）
+  
+  **不好用！！！！**
+  
+  预处理：将距离数组和邻接矩阵初始化（赋INF）
+  
+  对任意取一点，将距离其最近的点放入集合中，再将距离两点最近的点放入集合，以此类推
+  
+  eg：使用邻接矩阵，在此仅举出生成树的边值，如需建树还需要记录对应的边的编号
+  
+  ```cpp
+  void prim(int start=1){
+      dis[start]=0;
+      isIn[start]=true;
+      for(int i=1;i<=n;i++) dis[i]=min(dis[i],road[start][i]);
+      for(int i=1;i<n;i++){ //重复n-1次
+          int temp=INF;
+          int t=-1; //距离最近的点的编号
+          for(int j=1;j<=n;j++) {
+              if(!isIn[j]&&dis[j]<temp){ //找到距离集合最近且未使用的节点
+                  temp=dis[j];
+                  t=j;
+              }
+          }
+          isIn[i]=true; //标记使用节点
+          if(t==-1){ //没有找到，不连通
+              return;
+          }
+          for(int j=1;j<=n;j++){ //将该节点放入集合并更新距离
+              if(j==start) continue;
+              dis[j]=min(dis[j],road[t][j]);
+          }
+      }
+  }
+  ```
 
 * Kruskal算法（对边贪心，适用于稀疏图）
+
+**复杂度更低，但不适用边过多的情况**
 
 预处理：将并查集初始化
 
@@ -992,17 +1182,323 @@ void add(int u,int v,int w)
 }
 ```
 
+### 拓扑排序
+
+将一个<mark>**有向无环图（DAG）**</mark>的所有节点排序，使得排在前面的节点不能依赖于排在后面的节点，有DFS和BFS两种方式实现，DFS逻辑更清楚简洁，但不好输出特定顺序（如字典序）的拓扑队列，BFS则能输出字典序（使用优先队列即可）
+
+只列举BFS无前驱顶点优先（入度为0）的示例：预先遍历每个节点，将每个入度为0的节点推入队列，再遍历整个队列，将队首的节点移除，其所指向的所有节点入度减1，如果出现入度为0的节点，将其推入队列中
+
+```cpp
+void toposort(int n){
+    for(int i=1;i<=n;i++){
+        if(in[i]==0){
+            ans.push(i);
+            printf("%d ",i);
+        }
+    }
+    while(!ans.empty()){
+        int i=ans.front();
+        ans.pop();
+        for(int j : tree[i]){
+            in[j]--;
+            if(!in[j]){
+                ans.push(j);
+                printf("%d ",j);
+            }
+        }
+    }
+    return;
+}
+```
+
+### 欧拉路
+
+欧拉定理：
+
+    有向图度数=入度-出度，无向图度数等于顶点的边数
+
+* 欧拉回路：所有顶点都是偶数度（从哪来不走重复路回哪去）
+
+* 欧拉路：有且只有两个顶点是奇数度（从一个奇数度顶点不走重复路到另一个奇数路顶点）
+
+找路径：下为使用邻接矩阵处理的走过所有无向图边且不重复的找路径
+
+```cpp
+void find(int i){
+    int j;
+    for(j=1;j<=maxn;++j){ //遍历所有边
+        if(map[i][j]){//判断是否可走
+            map[i][j]--;
+            map[j][i]--; //标记该点/边
+            find(j); //dfs
+        }
+    }
+    lu[++cnt]=i; //记录路径
+}
+```
+
+### 连通性
+
+#### 割点与割边
+
+* 定理一：一棵树的根节点s是割点，当且仅当s有两个及以上的子节点
+
+* 定理二：一棵树的非根节点u是割点，当且仅当u存在至少一个子节点v，v及其后代都没有回退边回退至u的祖先
+  
+  eg：无向图Tarjan算法
+  
+  **注：如果图不连通需要遍历每一个节点为根（已经遍历过的节点直接跳过，即!num[i]）**
+  
+  ```cpp
+  for(int i=1;i<=n;i++){
+          if(!num[i]){
+              root=i;
+              dfs(i,-1);
+          }
+      }
+  ```
+  
+  ```cpp
+  void dfs(int u,int fa){
+      num[u]=++id;
+      low[u]=id; //根据DFS序编号，构建DFS树
+      int son=0; //记录子树个数
+      bool isCut=false; //标记割点，防止重复放入
+      for(int i=head[u];i!=0;i=nex[i]){
+          int v=to[i];
+          if(!num[v]){ //没遍历过的点
+              son++;
+              dfs(v,u);
+              low[u]=min(low[v],low[u]); //遍历完子树后确定最小值
+              //判断割边改为low[v]>num[u]即可
+              if(low[v]>=num[u] && u!=root) isCut= true; //定理二
+          }
+          //处理回退边，子节点v为父节点u的祖先且不是u-v双向返回边
+          else if(num[v]<num[u] && v!=fa) low[u]=min(num[v],low[u]);
+      }
+      if(u==root && son>=2) isCut= true; //定理一
+      if(isCut) ans.push_back(u);
+      return;
+  }，
+  ```
+
+#### 双连通分量
+
+点/边双连通分量定义：在双连通分量中，去掉任意一个点/边，该图仍是连通的
+
+* 点双连通分量：个数由割点决定，将每个遍历的**边**依次放入栈中，每找到一个割点将边全部移出，该些边构成一个点双连通分量
+  
+  ```cpp
+  void dfs(int u,int fa){
+      num[u]=low[u]=++id;
+      int son=0;
+      s[++top]=u;
+      for(int i=head[u];i!=0;i=nex[i]){
+          int v=to[i];
+          if(!num[v]){
+              son++;
+              dfs(v, u);
+              low[u]=min(low[u],low[v]);
+              //不需要判断不是根节点
+              if(low[v]>=num[u]){
+                  w++;
+                  while(s[top+1]!=v) ans[w].push_back(s[top--]);
+                  ans[w].push_back(u);
+              }
+          }
+          else if(num[u]>num[v] && v!=fa) low[u]=min(num[v],low[u]);
+      }
+      //点双连通分量实际上存储的是边，该题输出的是这些边的结点，故割点会被两个或以上双连通分量占有
+      //不论根节点是否为割点都会被包含，如果连通则最后一条边会被认为是回退边，根节点作为结束点
+      //if(u==root && son>=2)
+      if(fa==-1 && son==0) ans[++w].push_back(u);
+      return;
+  }
+  
+  void Tarjan(int n){
+      for(int i=1;i<=n;i++){
+          if(!num[i]){
+              root=i;
+              top=0;
+              dfs(i,-1);
+          }
+      }
+      return;
+  ```
+
+* 边双连通分量：先遍历一遍DFS树，标记出割边，再重新遍历，将相同low值的点看作一个“缩点”，每个缩点就是一个双连通分量
+  
+  **注：仅无向图可以，有向图要压栈**
+  
+  ```cpp
+  void dfs(int u,int fa){
+      num[u]=low[u]=++id;
+      for(int i=head[u];i!=0;i=nex[i]){
+          int v=to[i];
+          if(!num[v]){
+              dfs(v, u);
+              low[u]=min(low[u],low[v]);
+              //判断割边,将割边标记，注意无向图要标两边
+              //偶数^1=偶数+1，奇数^1=奇数-1，故初始cnt=1，边从2，3一对开始
+              if(low[v]>num[u]) isCut[i]=isCut[i^1]=1;
+          }
+          else if(num[u]>num[v] && v!=fa) low[u]=min(num[v],low[u]);
+      }
+      return;
+  }
+  
+  void dfs2(int u,int lowid){
+      dcc[u]=lowid; //标记遍历过该点
+      ans[lowid].push_back(u);
+      for(int i=head[u];i!=0;i=nex[i]){
+          int v=to[i];
+          if(dcc[v] || isCut[i]) continue; //如果遍历过该点或者是该边是割边则跳过
+          dfs2(v,lowid);
+      }
+      return;
+  }
+  
+  void Tarjan(int n){
+      //标记割边
+      for(int i=1;i<=n;i++){
+          if(!num[i]) dfs(i,-1);
+      }
+      //将low值相同的放入一个双连通分量中
+      for(int i=1;i<=n;i++){
+          if(!dcc[i]) dfs2(i,++w);
+      }
+      return;
+  }
+  ```
+
+#### 强连通分量 （有向图）
+
+* **Kosaraju算法**
+
+* **Tarjan算法**
+  
+  **定理三：一个SCC（强连通分量），从任何一点出发，都至少有一条路能绕回到自己**
+  
+  **<mark>Tarjan算法求出来的SCC编号即为反向拓扑排序！！！</mark>**
+  
+  在DFS中如果遍历到已经遍历过的点，这些点从栈中弹出构成强连通分量，进行缩点，将值累加，后续可以用缩点重新建图
+  
+  ```cpp
+  void dfs(int u) {
+      num[u] = low[u] = ++id;
+      stk.push(u);
+      vis[u] = 1; 
+      for (int i = head[u]; i != 0; i = nex[i]) {
+          int v = to[i];
+          if (!num[v]) { 
+              dfs(v);
+              low[u] = min(low[u], low[v]);
+          } 
+          //如果v为已在栈中元素（即v为u的祖先与前面Tarjan里意义一样）
+          else if (vis[v]) low[u] = min(low[u], num[v]);
+      }
+      if (num[u] == low[u]) {   // 找到一个强连通分量
+          w++;
+          int x;
+          do {
+              x = stk.top();
+              stk.pop();
+              dcc[x] = w;
+              newval[w] += val[x];
+              vis[x] = 0; 
+          } while (x != u);
+      }
+      return;
+  }
+  
+  void Tarjan(int n){
+      for(int i=1;i<=n;i++){
+          if(!num[i]) dfs(i);
+      }
+      return;
+  }
+  ```
+
+* 边双连通分量：将相同low值的点看作一个“缩点”，每个缩点就是一个双连通分量
+
 ### 最短路问题
 
-* Dijkstra算法
+* Dijkstra算法（单源最短路）
+
+运用贪心思想，从源点s开始，使用优先队列不断寻找距s最近距离的节点post，更新post所连接的节点距s距离，将已松弛且未遍历的点置入队列，不断循环直到队列未空
+
+**注**：优先队列存储点与点到s的距离，对dis进行比较，建立一个结构体node重载运算符<
+
+```cpp
+struct node{
+    int dis;
+    int post;
+    bool operator <( const node &x )const{ //重载运算符<
+        return x.dis < dis;
+    }
+};
+
+void dijkstra(int s,int n){
+    for(int i=1;i<=n;i++) dis[i]=INF; //初始化距离  
+    dis[s]=0;
+    priority_queue<node>q;
+    int inque[MAX]={0};
+    q.push(node{0,s});
+    while(!q.empty()){
+        node temp=q.top();
+        q.pop();
+        int post=temp.post;
+        if(inque[post]) continue;
+        inque[post]=1;
+        for(int j=head[post];j!=0;j=e[j].nex){
+            int v=e[j].to;
+            //松弛
+            if(dis[v]>dis[post]+e[j].val){
+                dis[v]=dis[post]+e[j].val;
+                if(!inque[v]) q.push(node{dis[v],v});
+            }
+        }
+    }
+}
+```
 
 * Floyd算法
+
+* Bellman-Ford算法
+
+**注：时间复杂度过高**
+
+对于**单源**最短路，每次对所有m条边进行遍历，如果通过相邻边得出的距离更短则更新，再次遍历，如果遍历次数超过n则有负环。
+
+```cpp
+void bf(int s,int n){
+    for(int i=1;i<=n;i++) dis[i]=INF;
+    dis[s]=0;
+    int num=0;
+    bool update=true;
+    while(update){
+        num++;
+        update=false;
+        if(num>n) break;
+        for(int u=1;u<=n;u++) {
+            for (int i = head[u]; i != 0; i = nex[i]) {
+                int v = to[i];
+                if(dis[v]>dis[u] + val[i]){
+                    dis[v] =dis[u] + val[i];
+                    update=true;
+                }
+            }
+        }
+    }
+    return;
+}
+```
 
 * SPFA/队列优化 Bellman-Ford算法（处理负边的权值，但时间复杂度过高）
 
 判断负环：
 
-1.开始算法前，调用拓扑排序进行判断（一般不采用，浪费时间）
+1.开始算法前，调用拓扑排序进行判断是否成环？（一般不采用，浪费时间）
 
 <mark>2. 如果某个点进入队列的次数超过N次则存在负环（N为图的顶点数）</mark>
 
@@ -1012,30 +1508,28 @@ void add(int u,int v,int w)
 
 ```cpp
 bool SPFA(int s,int n){ //源点为s，顶点数为n
-    queue<int> q;
-    dis[s]=0; //源点距离自己为0
-    q.push(s);
-    num[s]++;
-    while(!q.empty()){
-        int p=q.front();
-        if(num[p]>n) return false; //元素进队数量大于顶点数，为负环
-        q.pop();
-        inqueue[p]=false;
-        for(int i=head[p];i!=0;i=Next[i]){
-            int t=to[i];
-            if(val[i]+dis[p]<dis[t])
-        //if(val[i]+dis[p]>dis[t])
-        {
-                dis[t]=val[i]+dis[p];
-                if(!inqueue[t]){ //如果指向元素未在队列中则添加
-                    q.push(t);
-                    inqueue[t]=true;
-                    num[t]++;
-                }
-            }
-        }
-    }
-    return true;
+  queue<int> q;
+  dis[s]=0; //源点距离自己为0
+  q.push(s);
+  num[s]++;
+  while(!q.empty()){
+      int p=q.front();
+      if(num[p]>n) return false; //元素进队数量大于顶点数，为负环
+      q.pop();
+      inqueue[p]=false;
+      for(int i=head[p];i!=0;i=nex[i]){
+          int t=to[i];
+          if(val[i]+dis[p]<dis[t]){
+              dis[t]=val[i]+dis[p];
+              if(!inqueue[t]){ //如果指向元素未在队列中则添加
+                  q.push(t);
+                  inqueue[t]=true;
+                  num[t]++;
+              }
+          }
+      }
+  }
+  return true;
 }
 ```
 
@@ -1095,7 +1589,7 @@ int lca(int a,int b){
 
 ### 差分约束
 
-通过链式前向星建有向图，再建立超级源点方便计算，使用[SPFA](#_SPFA/队列优化_Bellman-Ford算法（处理负边的权值，但时)判断是否负环并查找最短路，最短路径即为方程组的一组解（如果存在负环，最短路无解，则原不等式组也无解。）
+通过链式前向星建有向图，再建立超级源点方便计算，使用[SPFA]()/队列优化_Bellman-Ford算法（处理负边的权值，但时判断是否负环并查找最短路，最短路径即为方程组的一组解（如果存在负环，最短路无解，则原不等式组也无解。）
 
 <mark>注</mark>：1.eg中为a-b≤x，如果为大于等于，则SPFA中需更改修改dis数组的判断条件
 
